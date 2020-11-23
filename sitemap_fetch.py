@@ -6,7 +6,7 @@ import datetime as dt
 from lxml import etree
 from datetime import datetime, timedelta
 from json import JSONEncoder
-from sitemap_range import SitemapRange
+from sitemap_range.sitemap_range import SitemapRange
 
 class datetime_encoder(JSONEncoder):
         def default(self, obj):

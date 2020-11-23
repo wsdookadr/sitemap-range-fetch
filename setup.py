@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://blog.garage-coding.com/",
     packages=setuptools.find_packages(),
+    scripts=["sitemap_fetch.py"],
     install_requires=[
           'lxml>=4.3.2',
           'requests>=2.21.0',

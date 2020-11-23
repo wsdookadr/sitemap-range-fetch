@@ -1,1 +1,4 @@
 __pycache__
+build
+dist
+sitemap_range_fetch_wsdookadr.egg-info
