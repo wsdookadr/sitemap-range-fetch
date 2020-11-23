@@ -60,7 +60,7 @@ class SitemapRange:
                 sitemap_url = (g.groups())[0]
                 yield sitemap_url
 
-    def handle_sitemapindex(self, parse_tree, start, end):
+    def handle_sitemapindex(self, parse_tree, start, end, opts):
         if parse_tree is not None:
             for x in parse_tree.getroottree().xpath('.//*[name() = "sitemap"]'):
                 y = x.xpath('.//*[name() = "loc"]/text()')
@@ -69,12 +69,21 @@ class SitemapRange:
                     z = z[0]
                     if z[-1] == 'Z':
                         z = z[:-1]
-                    dt = datetime.fromisoformat(z)
 
-                    if dt >= start and dt <= end:
-                        yield({"url": y[0], "dt": dt})
+                    dt = None
+                    try:
+                        dt = datetime.fromisoformat(z)
+                    except Exception as e:
+                        print(e,file=sys.stderr)
+                        continue
 
-    def handle_urlset(self, parse_tree, start, end):
+                    if dt:
+                        if "remove_tz" in opts and opts["remove_tz"]:
+                            dt = dt.replace(tzinfo=None)
+                        if dt >= start and dt <= end:
+                            yield({"url": y[0], "dt": dt})
+
+    def handle_urlset(self, parse_tree, start, end, opts):
         if parse_tree is not None:
             for x in parse_tree.getroottree().xpath('.//*[name() = "url"]'):
                 y = x.xpath('.//*[name() = "loc"]/text()')
@@ -91,17 +100,30 @@ class SitemapRange:
                     z = z[0]
                     if z[-1] == 'Z':
                         z = z[:-1]
-                    dt = datetime.fromisoformat(z)
 
-                    if dt >= start and dt <= end:
-                        ret = {"url": y[0], "dt": dt}
-                        yield(ret)
+                    dt = None
+                    try:
+                        dt = datetime.fromisoformat(z)
+                    except Exception as e:
+                        print(e,file=sys.stderr)
+                        continue
 
-    def get_articles_in_range(self, start=datetime.now(), end=datetime.now()):
+                    if dt:
+                        if "remove_tz" in opts and opts["remove_tz"]:
+                            dt = dt.replace(tzinfo=None)
+                        if dt >= start and dt <= end:
+                            yield({"url": y[0], "dt": dt})
+
+
+    def get_articles_in_range(self, start=datetime.now(), end=datetime.now(), opts=None):
         # 1st pass
         articles = []
         sitemaps = []
+        visited_url = {}
         for u in self.get_sitemap_urls():
+            if u in visited_url: continue
+            visited_url[u] = 1
+
             print("Processing sitemap:"+u, file=sys.stderr)
             parse_tree = None
             try:
@@ -116,13 +138,16 @@ class SitemapRange:
                 root_tag = parse_tree.tag
                 root_tag = re.sub(r"^[^}]+}","",root_tag)
                 if root_tag == "sitemapindex":
-                    for o in self.handle_sitemapindex(parse_tree, start, end):
+                    for o in self.handle_sitemapindex(parse_tree, start, end, opts):
                         sitemaps.append(o)
                 elif root_tag == "urlset":
-                    for o in self.handle_urlset(parse_tree, start, end):
+                    for o in self.handle_urlset(parse_tree, start, end, opts):
                         articles.append(o)
         # 2nd pass
         for sm in sitemaps:
+            if sm["url"] in visited_url: continue
+            visited_url[sm["url"]] = 1
+
             print("Processing sitemap:"+sm["url"], file=sys.stderr)
             parse_tree = None
             try:
@@ -134,7 +159,7 @@ class SitemapRange:
                 print("ERROR : " + str(e), file=sys.stderr)
 
             if parse_tree is not None:
-                for o in self.handle_urlset(parse_tree, start, end):
+                for o in self.handle_urlset(parse_tree, start, end, opts):
                     articles.append(o)
         
         return articles

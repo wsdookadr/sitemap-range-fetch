@@ -37,14 +37,19 @@ parser.add_argument('--format', dest='format', action='store', default="json", t
         help='the url for the website')
 parser.add_argument('--daysago', dest='daysago', action='store', default=2, type=int,
         help='defines the oldest date of an article that will be selected (default: 2 days ago)')
+parser.add_argument('--remove-tz', dest='remove_tz', action='store', default=False, type=bool,
+        help='remove the timezone from the dates to make the parsing more fault-tolerant')
 
 args   = parser.parse_args()
-
+print(args)
 start_ = datetime.now() - timedelta(days=args.daysago)
 end_   = datetime.now()
 
+opts = {}
+opts["remove_tz"] = args.remove_tz
+
 o = SitemapRange(args.site)
-in_range = o.get_articles_in_range(start=start_,end=end_)
+in_range = o.get_articles_in_range(start=start_,end=end_,opts=opts)
 
 if args.format == "json":
     print(json.dumps(in_range,sort_keys=True, indent=4, cls=datetime_encoder))
