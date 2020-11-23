@@ -1,11 +1,9 @@
 About
 =====
 
-This module provides the **SitemapRange** class and a tool to allow usage
-command-line usage **sitemap_fetch.py**.
+This module provides the **SitemapRange** class and a tool to allow command-line usage **sitemap_fetch.py**.
 
-The class **SitemapRange** is meant as a generic building block for creating
-news aggregating applications where the datasources are [spec-compliant](https://www.sitemaps.org/protocol.html) news websites.
+The class **SitemapRange** is meant primarily as a generic building block for creating news aggregating applications where the datasources are [spec-compliant](https://www.sitemaps.org/protocol.html) news websites.
 
 There are some fault-tolerance features included to deal with some inconsistencies in sitemaps.
 
@@ -15,7 +13,6 @@ Install
 To install from pypi:
 
     pip install --user sitemap-range-fetch
-
 
 Usage
 =====
