@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="sitemap-range-fetch",
-    version="0.9.0",
+    version="0.9.1",
     author="Stefan Corneliu Petrea",
     author_email="stefan@garage-coding.com",
     description="Sitemap scraper for news article selection within a certain time range",
