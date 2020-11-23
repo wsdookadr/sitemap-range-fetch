@@ -21,10 +21,11 @@ Fetching all news articles on [cnn.com](http://cnn.com) in the past 6 days, and 
 
     sitemap_fetch.py --site "https://cnn.com" --format json --daysago 6
 
-More custom filtering can be done by using the **SitemapRange** class can be used
+More custom filtering can be done by using the class **SitemapRange**
 
 Details
 =======
 
 This module is provided as is under [MIT License](https://opensource.org/licenses/MIT).
+
 For extensions, customizations or business inquiries you can [get in touch here](mailto:business@garage-coding.com).
