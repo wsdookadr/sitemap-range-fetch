@@ -11,7 +11,7 @@ setuptools.setup(
     description="Sitemap scraper for news article selection within a certain time range",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://blog.garage-coding.com/",
     packages=setuptools.find_packages(),
     install_requires=[
           'lxml>=4.3.2',
