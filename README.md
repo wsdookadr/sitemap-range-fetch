@@ -9,6 +9,14 @@ news aggregating applications where the datasources are [spec-compliant](https:/
 
 There are some fault-tolerance features included to deal with some inconsistencies in sitemaps.
 
+Install
+=======
+
+To install from pypi:
+
+    pip install --user sitemap-range-fetch
+
+
 Usage
 =====
 
