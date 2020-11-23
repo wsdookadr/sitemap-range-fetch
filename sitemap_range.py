@@ -17,7 +17,8 @@ The algorithm is composed of the following steps:
 4) for the sitemaps that were found in 3.2, fetch them and get the
    articles that are within the given timerange
 
-So steps 3.2 and 4 are handling a simple-nested hierarchy.
+So steps 3.2 and 4 are handling a simple-nested hierarchy (we're only
+handling one level of nesting).
 
 Sitemap hierarchy example:
 
@@ -101,16 +102,15 @@ class SitemapRange:
         articles = []
         sitemaps = []
         for u in self.get_sitemap_urls():
-            print("Processing sitemap:"+u)
+            print("Processing sitemap:"+u, file=sys.stderr)
             parse_tree = None
             try:
                 xml = self.get_page(u)
                 parse_tree = etree.XML(xml)
             except etree.XMLSyntaxError as e:
-                pass
+                print("ERROR : " + str(e), file=sys.stderr)
             except Exception as e:
-                print("ERROR 1: " + str(e))
-                pass
+                print("ERROR : " + str(e), file=sys.stderr)
 
             if parse_tree is not None:
                 root_tag = parse_tree.tag
@@ -123,21 +123,19 @@ class SitemapRange:
                         articles.append(o)
         # 2nd pass
         for sm in sitemaps:
-            print("Processing sitemap:"+sm["url"])
+            print("Processing sitemap:"+sm["url"], file=sys.stderr)
             parse_tree = None
             try:
                 xml = self.get_page(sm["url"])
                 parse_tree = etree.XML(xml)
             except etree.XMLSyntaxError as e:
-                pass
+                print("ERROR : " + str(e), file=sys.stderr)
             except Exception as e:
-                print("ERROR 2: " + str(e))
-                pass
+                print("ERROR : " + str(e), file=sys.stderr)
+
             if parse_tree is not None:
                 for o in self.handle_urlset(parse_tree, start, end):
                     articles.append(o)
         
         return articles
-
-
 
