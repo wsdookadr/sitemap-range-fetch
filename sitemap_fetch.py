@@ -41,7 +41,6 @@ parser.add_argument('--remove-tz', dest='remove_tz', action='store', default=Fal
         help='remove the timezone from the dates (processing is more fault-tolerant)')
 
 args   = parser.parse_args()
-print(args)
 start_ = datetime.now() - timedelta(days=args.daysago)
 end_   = datetime.now()
 
