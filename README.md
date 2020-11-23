@@ -22,4 +22,4 @@ Details
 =======
 
 This module is provided as is under [MIT License](https://opensource.org/licenses/MIT).
-For extensions, customizations or business inquiries, [get in touch](mailto:business@garage-coding.com).
+For extensions, customizations or business inquiries you can [get in touch here](mailto:business@garage-coding.com).
