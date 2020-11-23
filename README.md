@@ -21,7 +21,13 @@ Fetching all news articles on [cnn.com](http://cnn.com) in the past 6 days, and 
 
     sitemap_fetch.py --site "https://cnn.com" --format json --daysago 6
 
-More custom filtering can be done by using the class **SitemapRange**
+Here is an example of using the **SitemapRange** class in your code:
+
+    from sitemap_range.sitemap_range import SitemapRange
+    from datetime import datetime, timedelta
+    sr = SitemapRange("https://cnn.com")
+    in_range = sr.get_articles_in_range(start=datetime.now()-timedelta(days=3), end=datetime.now(), opts={})
+    print(in_range)
 
 Details
 =======
