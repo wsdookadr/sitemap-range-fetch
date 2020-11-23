@@ -20,6 +20,9 @@ The algorithm is composed of the following steps:
 So steps 3.2 and 4 are handling a simple-nested hierarchy (we're only
 handling one level of nesting).
 
+Along the way, a visited_url dictionary is kept updated to skip any
+duplicate urls (example: two different tag sitemaps have the same url).
+
 Sitemap hierarchy example:
 
 . robots.txt

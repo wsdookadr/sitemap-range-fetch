@@ -38,7 +38,7 @@ parser.add_argument('--format', dest='format', action='store', default="json", t
 parser.add_argument('--daysago', dest='daysago', action='store', default=2, type=int,
         help='defines the oldest date of an article that will be selected (default: 2 days ago)')
 parser.add_argument('--remove-tz', dest='remove_tz', action='store', default=False, type=bool,
-        help='remove the timezone from the dates to make the parsing more fault-tolerant')
+        help='remove the timezone from the dates (processing is more fault-tolerant)')
 
 args   = parser.parse_args()
 print(args)
