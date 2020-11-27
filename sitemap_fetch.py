@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(description='Tool for extracting articles from 
 parser.add_argument('--site', dest='site', action='store', required=True, type=valid_basic_url,
         help='the url for the website')
 parser.add_argument('--format', dest='format', action='store', default="json", type=valid_format,
-        help='the url for the website')
+        help='output format (the default is json, also supports xml)')
 parser.add_argument('--daysago', dest='daysago', action='store', default=2, type=int,
         help='defines the oldest date of an article that will be selected (default: 2 days ago)')
 parser.add_argument('--notz', dest='notz', action='store_true',
