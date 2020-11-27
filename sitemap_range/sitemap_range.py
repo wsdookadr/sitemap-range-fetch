@@ -53,6 +53,9 @@ class SitemapRange:
 
     def get_page(self, url, opts, raw=True):
         rhead = requests.head(url)
+        if 'Content-Length' not in rhead.headers:
+            return None
+
         res_size = int(rhead.headers['Content-Length'])
         MB = 1024**2
         if opts["transfer_limit"] and int((self.total_bytes_fetched + res_size)/MB) > opts["transfer_limit"]:
@@ -75,11 +78,12 @@ class SitemapRange:
 
     def get_sitemap_urls(self, opts):
         robots_txt = self.get_page(self.domain + "/robots.txt", opts, raw=False)
-        for line in robots_txt.split("\n"):
-            g = re.match(r"^Sitemap: (.*)$", line)
-            if g and len(g.groups()) > 0:
-                sitemap_url = (g.groups())[0]
-                yield sitemap_url
+        if robots_txt:
+            for line in robots_txt.split("\n"):
+                g = re.match(r"^Sitemap: (.*)$", line)
+                if g and len(g.groups()) > 0:
+                    sitemap_url = (g.groups())[0]
+                    yield sitemap_url
 
     def parse_page(self, url, opts):
         if "parsing_method" not in opts or opts["parsing_method"] == "basic":
