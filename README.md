@@ -56,9 +56,9 @@ More details about the CLI switches:
                             total transfer limit in MB
 ```
 
-Details
-=======
+Commercial Support
+==================
 
-This module is provided as is under [MIT License](https://opensource.org/licenses/MIT).
+For commercial support or customizations, please send an e-mail at business@garage-coding.com
 
-For extensions, customizations or business inquiries you can [get in touch here](mailto:business@garage-coding.com).
+
