@@ -39,19 +39,21 @@ More details about the CLI switches:
 
 ```
     usage: sitemap_fetch.py [-h] --site SITE [--format FORMAT] [--daysago DAYSAGO]
-                            [--notz] [--advanced]
+                            [--notz] [--advanced] [--tlimit TRANSFER_LIMIT]
 
     Tool for extracting articles from news websites
 
     optional arguments:
-      -h, --help         show this help message and exit
-      --site SITE        the url for the website
-      --format FORMAT    the url for the website
-      --daysago DAYSAGO  defines the oldest date of an article that will be
-                         selected (default: 2 days ago)
-      --notz             strip the timezone from the dates before selection
-                         (processing is more fault-tolerant)
-      --advanced         use a more fault-tolerant parser
+      -h, --help            show this help message and exit
+      --site SITE           the url for the website
+      --format FORMAT       output format (the default is json, also supports xml)
+      --daysago DAYSAGO     defines the oldest date of an article that will be
+                            selected (default: 2 days ago)
+      --notz                strip the timezone from the dates before selection
+                            (processing is more fault-tolerant)
+      --advanced            use a more fault-tolerant parser
+      --tlimit TRANSFER_LIMIT
+                            total transfer limit in MB
 ```
 
 Details

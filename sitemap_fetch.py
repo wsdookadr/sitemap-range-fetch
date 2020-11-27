@@ -41,6 +41,8 @@ parser.add_argument('--notz', dest='notz', action='store_true',
         help='strip the timezone from the dates before selection (processing is more fault-tolerant)')
 parser.add_argument('--advanced', dest='advanced', action='store_true',
         help='use a more fault-tolerant parser')
+parser.add_argument('--tlimit', dest='transfer_limit', action='store', default=None, type=int,
+        help='total transfer limit in MB')
 
 args   = parser.parse_args()
 start_ = datetime.now() - timedelta(days=args.daysago)
@@ -49,6 +51,7 @@ end_   = datetime.now()
 opts = {}
 opts["notz"] = args.notz
 opts["parsing_method"] = "advanced" if args.advanced else "basic"
+opts["transfer_limit"] = args.transfer_limit
 
 o = SitemapRange(args.site)
 in_range = o.get_articles_in_range(start=start_,end=end_,opts=opts)

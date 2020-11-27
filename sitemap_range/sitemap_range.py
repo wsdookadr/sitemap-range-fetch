@@ -49,9 +49,17 @@ class SitemapRange:
 
     def __init__(self, domain):
         self.domain = domain
+        self.total_bytes_fetched = 0
 
-    def get_page(self, url, raw=True):
+    def get_page(self, url, opts, raw=True):
+        rhead = requests.head(url)
+        res_size = int(rhead.headers['Content-Length'])
+        MB = 1024**2
+        if opts["transfer_limit"] and int((self.total_bytes_fetched + res_size)/MB) > opts["transfer_limit"]:
+            return None
         r = requests.get(url)
+        self.total_bytes_fetched += res_size
+        print("total_bytes_fetched=",self.total_bytes_fetched)
         if raw:
             return r.content
         else:
@@ -65,8 +73,8 @@ class SitemapRange:
                 return True
         return False
 
-    def get_sitemap_urls(self):
-        robots_txt = self.get_page(self.domain + "/robots.txt", raw=False)
+    def get_sitemap_urls(self, opts):
+        robots_txt = self.get_page(self.domain + "/robots.txt", opts, raw=False)
         for line in robots_txt.split("\n"):
             g = re.match(r"^Sitemap: (.*)$", line)
             if g and len(g.groups()) > 0:
@@ -75,11 +83,11 @@ class SitemapRange:
 
     def parse_page(self, url, opts):
         if "parsing_method" not in opts or opts["parsing_method"] == "basic":
-            xml = self.get_page(url)
+            xml = self.get_page(url,opts)
             parse_tree = etree.XML(xml)
             return parse_tree
         elif opts["parsing_method"] == "advanced":
-            xml = self.get_page(url)
+            xml = self.get_page(url,opts)
             soup = BeautifulSoup(xml, "xml")
             parse_tree = (convert_tree(soup))[0]
             parse_tree.getroottree = (lambda : parse_tree)
@@ -138,7 +146,7 @@ class SitemapRange:
         articles = []
         sitemaps = []
         visited_url = {}
-        for u in self.get_sitemap_urls():
+        for u in self.get_sitemap_urls(opts):
             if u in visited_url: continue
             visited_url[u] = 1
 
