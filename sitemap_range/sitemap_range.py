@@ -74,7 +74,7 @@ class SitemapRange:
                 yield sitemap_url
 
     def parse_page(self, url, opts):
-        if   opts["parsing_method"] == "basic":
+        if "parsing_method" not in opts or opts["parsing_method"] == "basic":
             xml = self.get_page(url)
             parse_tree = etree.XML(xml)
             return parse_tree
