@@ -37,15 +37,18 @@ parser.add_argument('--format', dest='format', action='store', default="json", t
         help='the url for the website')
 parser.add_argument('--daysago', dest='daysago', action='store', default=2, type=int,
         help='defines the oldest date of an article that will be selected (default: 2 days ago)')
-parser.add_argument('--remove-tz', dest='remove_tz', action='store', default=False, type=bool,
-        help='remove the timezone from the dates (processing is more fault-tolerant)')
+parser.add_argument('--notz', dest='notz', action='store_true',
+        help='strip the timezone from the dates before selection (processing is more fault-tolerant)')
+parser.add_argument('--advanced', dest='advanced', action='store_true',
+        help='use a more fault-tolerant parser')
 
 args   = parser.parse_args()
 start_ = datetime.now() - timedelta(days=args.daysago)
 end_   = datetime.now()
 
 opts = {}
-opts["remove_tz"] = args.remove_tz
+opts["notz"] = args.notz
+opts["parsing_method"] = "advanced" if args.advanced else "basic"
 
 o = SitemapRange(args.site)
 in_range = o.get_articles_in_range(start=start_,end=end_,opts=opts)

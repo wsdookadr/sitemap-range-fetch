@@ -3,6 +3,8 @@ import re
 import requests
 from io import StringIO
 from datetime import datetime, timedelta
+from lxml.html.soupparser import convert_tree
+from bs4 import BeautifulSoup
 from lxml import etree
 """
 
@@ -55,6 +57,14 @@ class SitemapRange:
         else:
             return r.text
 
+    def in_range(self,dt,start,end,opts):
+        if dt:
+            if "notz" in opts and opts["notz"]:
+                dt = dt.replace(tzinfo=None)
+            if dt >= start and dt <= end:
+                return True
+        return False
+
     def get_sitemap_urls(self):
         robots_txt = self.get_page(self.domain + "/robots.txt", raw=False)
         for line in robots_txt.split("\n"):
@@ -62,6 +72,18 @@ class SitemapRange:
             if g and len(g.groups()) > 0:
                 sitemap_url = (g.groups())[0]
                 yield sitemap_url
+
+    def parse_page(self, url, opts):
+        if   opts["parsing_method"] == "basic":
+            xml = self.get_page(url)
+            parse_tree = etree.XML(xml)
+            return parse_tree
+        elif opts["parsing_method"] == "advanced":
+            xml = self.get_page(url)
+            soup = BeautifulSoup(xml, "xml")
+            parse_tree = (convert_tree(soup))[0]
+            parse_tree.getroottree = (lambda : parse_tree)
+            return parse_tree
 
     def handle_sitemapindex(self, parse_tree, start, end, opts):
         if parse_tree is not None:
@@ -77,14 +99,11 @@ class SitemapRange:
                     try:
                         dt = datetime.fromisoformat(z)
                     except Exception as e:
-                        print(e,file=sys.stderr)
+                        print("ERROR5 " + str(e),file=sys.stderr)
                         continue
 
-                    if dt:
-                        if "remove_tz" in opts and opts["remove_tz"]:
-                            dt = dt.replace(tzinfo=None)
-                        if dt >= start and dt <= end:
-                            yield({"url": y[0], "dt": dt})
+                    if self.in_range(dt,start,end,opts):
+                        yield({"url": y[0], "dt": dt})
 
     def handle_urlset(self, parse_tree, start, end, opts):
         if parse_tree is not None:
@@ -108,15 +127,11 @@ class SitemapRange:
                     try:
                         dt = datetime.fromisoformat(z)
                     except Exception as e:
-                        print(e,file=sys.stderr)
+                        print("ERROR6 " + str(e),file=sys.stderr)
                         continue
 
-                    if dt:
-                        if "remove_tz" in opts and opts["remove_tz"]:
-                            dt = dt.replace(tzinfo=None)
-                        if dt >= start and dt <= end:
-                            yield({"url": y[0], "dt": dt})
-
+                    if self.in_range(dt,start,end,opts):
+                        yield({"url": y[0], "dt": dt})
 
     def get_articles_in_range(self, start=datetime.now(), end=datetime.now(), opts=None):
         # 1st pass
@@ -130,12 +145,11 @@ class SitemapRange:
             print("Processing sitemap:"+u, file=sys.stderr)
             parse_tree = None
             try:
-                xml = self.get_page(u)
-                parse_tree = etree.XML(xml)
+                parse_tree = self.parse_page(u,opts)
             except etree.XMLSyntaxError as e:
-                print("ERROR : " + str(e), file=sys.stderr)
+                print("ERROR1 : " + str(e), file=sys.stderr)
             except Exception as e:
-                print("ERROR : " + str(e), file=sys.stderr)
+                print("ERROR2 : " + str(e), file=sys.stderr)
 
             if parse_tree is not None:
                 root_tag = parse_tree.tag
@@ -154,12 +168,11 @@ class SitemapRange:
             print("Processing sitemap:"+sm["url"], file=sys.stderr)
             parse_tree = None
             try:
-                xml = self.get_page(sm["url"])
-                parse_tree = etree.XML(xml)
+                parse_tree = self.parse_page(sm["url"],opts)
             except etree.XMLSyntaxError as e:
-                print("ERROR : " + str(e), file=sys.stderr)
+                print("ERROR3 : " + str(e), file=sys.stderr)
             except Exception as e:
-                print("ERROR : " + str(e), file=sys.stderr)
+                print("ERROR4 : " + str(e), file=sys.stderr)
 
             if parse_tree is not None:
                 for o in self.handle_urlset(parse_tree, start, end, opts):
